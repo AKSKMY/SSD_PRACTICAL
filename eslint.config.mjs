@@ -7,7 +7,7 @@ import pluginSecurity from "eslint-plugin-security";
 /** @type {import("eslint").Linter.FlatConfig[]} */
 export default [
   {
-    // apply to all JavaScript variants
+    // only run on your source files…
     files: ["**/*.{js,mjs,cjs}"],
     ignores: ["node_modules/**"],
 
@@ -17,24 +17,20 @@ export default [
       globals: globals.browser,
     },
 
-    // register plugins
+    // register the security plugin (no need to register "js" for core rules)
     plugins: {
-      js: pluginJs,
       security: pluginSecurity,
     },
 
-    // pull in each plugin’s recommended rules
-    extends: [
-      pluginJs.configs.recommended,        // eslint:recommended
-      pluginSecurity.configs.recommended,  // eslint-plugin-security/recommended
-    ],
-
-    // your custom rule tweaks
     rules: {
-      // flag eval-like patterns
-      "security/detect-eval-with-expression": "error",
+      // 1) spread in all the core-recommended rules
+      ...pluginJs.configs.recommended.rules,
 
-      // example: turn off console.logs in production
+      // 2) spread in all the security-recommended rules
+      ...pluginSecurity.configs.recommended.rules,
+
+      // 3) your custom overrides:
+      "security/detect-eval-with-expression": "error",
       "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
     },
   },
