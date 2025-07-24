@@ -1,5 +1,10 @@
 name: ESLint
 
+# grant only what's needed for code scanning
+permissions:
+  contents: read          # your job still needs to read your code
+  security-events: write  # <-- allows SARIF upload
+
 on:
   push:
     branches:
